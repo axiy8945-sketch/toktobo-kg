@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ТОКТОБО KG түстөрү (RGB — Tailwind'дин тунуктук колдоосу үчүн) */
+:root {
+  --bg: 255 255 255;
+  --soft: 244 245 247;
+  --soft-2: 235 237 241;
+  --card: 255 255 255;
+  --ink: 15 30 61;
+  --ink-2: 51 65 92;
+  --muted: 107 114 128;
+  --line: 227 230 235;
+  --accent: 44 82 160;
+  --accent-ink: 255 255 255;
+  --accent-soft: 233 238 248;
+  --ok: 31 122 77;
+  --warn: 168 106 18;
+  --bad: 180 55 44;
+  --cv-l1: 90%;
+  --cv-l2: 76%;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 10 17 32;
+    --soft: 18 27 45;
+    --soft-2: 25 36 58;
+    --card: 15 24 41;
+    --ink: 232 237 246;
+    --ink-2: 194 202 218;
+    --muted: 140 150 168;
+    --line: 34 48 73;
+    --accent: 134 167 238;
+    --accent-ink: 10 17 32;
+    --accent-soft: 26 41 72;
+    --ok: 95 194 141;
+    --warn: 226 165 75;
+    --bad: 231 114 103;
+    --cv-l1: 24%;
+    --cv-l2: 15%;
+    color-scheme: dark;
+  }
+}
+
+html, body { background: rgb(var(--bg)); color: rgb(var(--ink)); }
+body { -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { text-wrap: balance; letter-spacing: -0.025em; }
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-[1120px]; padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+  .eb { @apply font-mono text-[13px] font-medium uppercase tracking-[0.16em] text-muted; }
+  .h2 { @apply text-[clamp(30px,8.4vw,44px)] font-semibold leading-[1.08] tracking-[-0.03em]; }
+  .btn { @apply inline-flex items-center justify-center gap-3 rounded-xl border border-transparent bg-accent px-[22px] py-[15px] text-center font-mono text-sm font-semibold uppercase tracking-[0.1em] text-accent-ink transition active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-line { @apply border-line bg-card text-ink; }
+  .btn-sm { @apply gap-2 px-3.5 py-2.5 text-xs; }
+  .lnk { @apply inline-flex items-center gap-1.5 text-[17px] font-medium text-accent; }
+  .tag { @apply rounded-md border border-line px-[7px] py-[3px] font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-muted; }
+  .tag-on { @apply border-transparent bg-accent-soft text-accent; }
+  .field { @apply grid min-w-0 gap-1.5 text-sm font-semibold; }
+  .input { @apply w-full min-w-0 rounded-xl border border-line bg-card px-3.5 py-3 text-base font-normal outline-none focus:border-accent; }
+  .chip { @apply flex flex-none items-center gap-2 whitespace-nowrap rounded-full border border-line bg-card px-4 py-2.5 text-sm font-medium; }
+  .chip-on { @apply border-transparent bg-ink text-bg; }
+  .state { @apply inline-block rounded-lg px-2.5 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.1em]; }
+  .state-ok { background: rgb(var(--ok) / .14); color: rgb(var(--ok)); }
+  .state-wait { background: rgb(var(--warn) / .16); color: rgb(var(--warn)); }
+  .note { @apply flex items-start gap-2.5 rounded-[14px] bg-soft px-3.5 py-3 text-[13px] text-muted; }
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Генерацияланган мукаба (сүрөт жүктөлбөгөндө) */
+.cv { container-type: inline-size; position: relative; aspect-ratio: 3/4; max-width: 100%; border-radius: 6px; overflow: hidden;
+  background: linear-gradient(160deg, hsl(var(--h) 45% var(--cv-l1)), hsl(var(--h) 32% var(--cv-l2))); display: grid; place-items: center; }
+.cv img { width: 100%; height: 100%; object-fit: cover; }
+.cv .bk { position: relative; z-index: 1; width: 64%; aspect-ratio: 2/3; background: hsl(var(--h) 42% 27%); border-radius: 2px 5px 5px 2px;
+  box-shadow: 0 14px 22px -10px rgba(0,0,0,.55), inset 4px 0 0 rgba(0,0,0,.22); padding: 12% 9% 9% 13%;
+  display: flex; flex-direction: column; justify-content: space-between; color: #F6EFE2; transform: translateY(-3%); }
+.cv .bk i { font-style: normal; font-size: 4.6cqw; letter-spacing: .12em; text-transform: uppercase; opacity: .75; font-family: var(--font-mono); }
+.cv .bk b { font-size: 8.4cqw; line-height: 1.15; font-weight: 600; overflow-wrap: break-word; hyphens: auto; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
