@@ -37,7 +37,7 @@ export async function placeOrder(input: {
   const { data: o } = await sb.from("orders")
     .select("number, name, phone, address, pay_method, total, order_items(title, kind, qty)")
     .eq("id", data as string).single();
-  if (o) await notifyNewOrder({ ...o, items: (o.order_items ?? []) as { title: string; kind: string; qty: number }[] });
+  if (o) await notifyNewOrder({ ...o, items: (o.order_items ?? []) as unknown as { title: string; kind: string; qty: number }[] });
   revalidatePath("/orders");
   return { ok: true, data: { id: data as string } };
 }

@@ -1,3 +1,4 @@
+import type React from "react";
 import type { Book } from "@/lib/types";
 import { Mark } from "./icons";
 
@@ -22,7 +23,7 @@ export function Cover({ book, className = "" }: { book: Pick<Book, "id" | "title
       </div>
     );
   return (
-    <div className={`cv ${className}`} style={{ ["--h" as string]: hue(book.id) }} role="img" aria-label={book.title}>
+    <div className={`cv ${className}`} style={{ "--h": hue(book.id) } as React.CSSProperties} role="img" aria-label={book.title}>
       <div className="bk">
         <i>{book.author}</i>
         <b>{book.title}</b>

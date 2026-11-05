@@ -40,7 +40,7 @@ export async function getPendingEbooks(userId: string | undefined): Promise<Set<
     .eq("user_id", userId)
     .in("status", ["pending", "qr_sent"]);
   const s = new Set<string>();
-  for (const o of data ?? []) for (const i of (o.order_items as { book_id: string; kind: string }[]) ?? []) if (i.kind === "ebook") s.add(i.book_id);
+  for (const o of data ?? []) for (const i of ((o.order_items ?? []) as unknown as { book_id: string; kind: string }[])) if (i.kind === "ebook") s.add(i.book_id);
   return s;
 }
 

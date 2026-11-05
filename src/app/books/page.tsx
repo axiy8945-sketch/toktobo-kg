@@ -24,7 +24,11 @@ export default async function BooksPage({ searchParams }: { searchParams: SP }) 
     return true;
   });
   const href = (p: Record<string, string>) => {
-    const sp = new URLSearchParams({ ...(q && { q }), ...(cat && { cat }), ...(fmt !== "all" && { fmt }), ...p });
+    const base: Record<string, string> = {};
+    if (q) base.q = q;
+    if (cat) base.cat = cat;
+    if (fmt !== "all") base.fmt = fmt;
+    const sp = new URLSearchParams({ ...base, ...p });
     for (const [k, v] of [...sp.entries()]) if (!v || (k === "fmt" && v === "all")) sp.delete(k);
     const s = sp.toString();
     return s ? `/books?${s}` : "/books";
