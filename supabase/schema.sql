@@ -379,3 +379,16 @@ create policy books_files_read on storage.objects for select using (
 -- update public.profiles set role = 'admin'
 --  where id = (select id from auth.users where email = 'sizdin@email.kg');
 -- =====================================================================
+
+-- ---------- Функцияларга уруксат (коопсуздук) ----------
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.add_reading_seconds(int) from public, anon;
+revoke execute on function public.bump_ai_usage() from public, anon;
+revoke execute on function public.claim_free_book(uuid) from public, anon;
+revoke execute on function public.place_order(jsonb, text, text, text, text, text) from public, anon;
+revoke execute on function public.set_order_status(uuid, text) from public, anon;
+grant execute on function public.add_reading_seconds(int) to authenticated;
+grant execute on function public.bump_ai_usage() to authenticated;
+grant execute on function public.claim_free_book(uuid) to authenticated;
+grant execute on function public.place_order(jsonb, text, text, text, text, text) to authenticated;
+grant execute on function public.set_order_status(uuid, text) to authenticated;
