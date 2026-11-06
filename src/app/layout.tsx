@@ -13,8 +13,11 @@ const sans = Onest({ subsets: ["latin", "cyrillic", "cyrillic-ext"], variable: "
 const mono = JetBrains_Mono({ subsets: ["latin", "cyrillic", "cyrillic-ext"], weight: ["500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "ТОКТОБО KG", template: "%s · ТОКТОБО KG" },
-  description: "Кыргызстандын санариптик китеп үйү: онлайн окуу, кагаз китептер, AI окуу коучу.",
+  metadataBase: new URL("https://toktobo-kg.vercel.app"),
+  title: { default: "Toktobo — китептер, онлайн окуу", template: "%s · Toktobo" },
+  openGraph: { siteName: "Toktobo", type: "website", images: ["/brand/logo.png"] },
+  keywords: ["Toktobo", "Токтобо", "китеп", "китептер", "онлайн окуу", "басма үй", "Кыргызстан", "kitob", "книги"],
+  description: "Toktobo басма үйү: китептерди онлайн окуңуз же кагаз нускасына заказ бериңиз. Оку. Өнүк. Токтобо.",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
   appleWebApp: { capable: true, title: "ТОКТОБО", statusBarStyle: "default" },

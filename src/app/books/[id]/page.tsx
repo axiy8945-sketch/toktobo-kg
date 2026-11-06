@@ -11,6 +11,19 @@ import { IconTelegram, IconWhatsApp } from "@/components/Contacts";
 import { IconBooks, IconEbook, IconLeft } from "@/components/icons";
 import { BookActions } from "./BookActions";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const book = await getBook(id);
+  if (!book || !book.is_published) return { title: "Toktobo" };
+  const cover = book.cover_path ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${book.cover_path}` : undefined;
+  const description = (book.description ?? `${book.title} — ${book.author}. Toktobo басма үйү.`).slice(0, 160);
+  return {
+    title: `${book.title} — ${book.author}`,
+    description,
+    openGraph: { title: book.title, description, images: cover ? [cover] : undefined, type: "book" },
+  };
+}
+
 export default async function BookPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const lang = await getLang();
