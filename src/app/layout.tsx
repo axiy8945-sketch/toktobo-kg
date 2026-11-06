@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Onest, JetBrains_Mono, Kaushan_Script } from "next/font/google";
+import { Onest, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { TabBar } from "@/components/TabBar";
@@ -10,14 +10,13 @@ import { getStats } from "@/lib/data";
 import { t } from "@/lib/i18n";
 
 const sans = Onest({ subsets: ["latin", "cyrillic", "cyrillic-ext"], variable: "--font-sans", display: "swap" });
-const script = Kaushan_Script({ subsets: ["latin"], weight: "400", variable: "--font-script", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin", "cyrillic", "cyrillic-ext"], weight: ["500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "ТОКТОБО KG", template: "%s · ТОКТОБО KG" },
   description: "Кыргызстандын санариптик китеп үйү: онлайн окуу, кагаз китептер, AI окуу коучу.",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/icons/icon.svg", apple: "/icons/icon-192.png" },
+  icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
   appleWebApp: { capable: true, title: "ТОКТОБО", statusBarStyle: "default" },
 };
 
@@ -42,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     coach: t(lang, "nav_coach"), prog: t(lang, "nav_profile"),
   };
   return (
-    <html lang={lang} className={`${sans.variable} ${mono.variable} ${script.variable}`}>
+    <html lang={lang} className={`${sans.variable} ${mono.variable}`}>
       <body className="min-h-dvh font-sans text-base leading-normal">
         <Providers lang={lang}>
           <Header lang={lang} loggedIn={!!user} isStaff={isStaff} today={stats ? { min: stats.todayMin, goal } : null} />

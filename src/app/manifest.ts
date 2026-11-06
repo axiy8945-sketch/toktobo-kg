@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Оку. Өнүк. Токтобо.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#f5a823",
+    background_color: "#f2b03f",
+    theme_color: "#f2b03f",
     lang: "ky",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

@@ -28,23 +28,19 @@ export const IconCheck = ({ className }: P) => (<svg viewBox="0 0 24 24" classNa
 export const IconClock = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>);
 export const IconInsta = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.3" cy="6.7" r=".8" fill="currentColor" /></svg>);
 
-/** Токтобо белгиси: сары тегерек ичинде кара китептер тизмеги */
+/** Токтобо белгиси: сары тегерек ичинде расмий китеп белгиси */
 export const Mark = ({ className }: P) => (
-  <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-    <circle cx="24" cy="24" r="24" fill="rgb(var(--accent))" />
-    <g fill="#171717">
-      <rect x="15" y="12" width="18" height="5.5" rx="1.6" transform="rotate(-7 24 14.75)" />
-      <rect x="13.5" y="20" width="21" height="5.5" rx="1.6" />
-      <rect x="15" y="28" width="18" height="5.5" rx="1.6" transform="rotate(5 24 30.75)" />
-    </g>
-    <path d="M16.5 36.5h15" stroke="#171717" strokeWidth="2.2" strokeLinecap="round" />
-  </svg>
+  <span className={`inline-grid place-items-center rounded-full bg-accent ${className ?? ""}`} aria-hidden="true">
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/brand/mark.png" alt="" className="h-[58%] w-auto" />
+  </span>
 );
 
-/** Логотип: белги + «Toktobo» жазуусу */
+/** Логотип: белги + расмий «Toktobo» жазуусу */
 export const Logo = ({ className = "" }: P) => (
   <span className={`inline-flex items-center gap-2 ${className}`}>
     <Mark className="h-9 w-9 flex-none" />
-    <span className="font-script text-[24px] leading-none text-ink">Toktobo</span>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/brand/wordmark.png" alt="Toktobo" className="h-[30px] w-auto dark:invert" />
   </span>
 );
