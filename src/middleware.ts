@@ -3,6 +3,14 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Supabase сессиясын ар бир сурамда жаңылап турат.
 export async function middleware(request: NextRequest) {
+  // Supabase кирүү кодун башкы бетке жөнөтсө да, аны кирүү бетине багыттайбыз
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && request.nextUrl.pathname !== "/auth/callback") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    url.search = `?code=${encodeURIComponent(code)}&next=${encodeURIComponent(request.nextUrl.pathname)}`;
+    return NextResponse.redirect(url);
+  }
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
