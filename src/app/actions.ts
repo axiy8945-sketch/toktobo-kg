@@ -2,7 +2,6 @@
 import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { CartItem } from "@/lib/types";
-import { notifyNewOrder } from "@/lib/notify";
 
 type Result<T = undefined> = { ok: true; data?: T } | { ok: false; error: string };
 
@@ -35,10 +34,6 @@ export async function placeOrder(input: {
     p_use_bonus: Math.max(0, Math.floor(Number(input.useBonus) || 0)),
   });
   if (error) return { ok: false, error: error.message };
-  const { data: o } = await sb.from("orders")
-    .select("number, name, phone, address, pay_method, total, bonus_used, order_items(title, kind, qty)")
-    .eq("id", data as string).single();
-  if (o) await notifyNewOrder({ ...o, items: (o.order_items ?? []) as unknown as { title: string; kind: string; qty: number }[] });
   revalidatePath("/orders");
   return { ok: true, data: { id: data as string } };
 }

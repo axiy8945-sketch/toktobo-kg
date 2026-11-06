@@ -3,11 +3,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCart } from "./Providers";
-import { IconBag, IconInsta, IconMenu, IconNE, IconSearch, IconX, Logo } from "./icons";
+import { IconBag, IconMenu, IconNE, IconSearch, IconX, Logo } from "./icons";
 import { LANG_COOKIE, t } from "@/lib/i18n";
 import type { Lang } from "@/lib/types";
 import { supabaseBrowser } from "@/lib/supabase/client";
-import { INSTAGRAM } from "@/lib/brand";
+import { ContactChips } from "./Contacts";
 
 
 /** Бүгүнкү окуу максатынын тегерек көрсөткүчү */
@@ -110,13 +110,7 @@ export function Header({ lang, loggedIn, isStaff, today }: {
               )}
             </nav>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              {INSTAGRAM.map((i) => (
-                <a key={i.handle} href={i.url} target="_blank" rel="noopener noreferrer" className="chip">
-                  <IconInsta className="h-4 w-4" /> @{i.handle}
-                </a>
-              ))}
-            </div>
+            <div className="mt-5"><ContactChips /></div>
           </div>
         </div>
       )}

@@ -5,8 +5,8 @@ import { catName, t } from "@/lib/i18n";
 import { getAccessSet, getBooks, getCategories, getStats } from "@/lib/data";
 import { BookGrid } from "@/components/BookCard";
 import { Ornament, RUBRIC_COLORS, SecHead, Shelf } from "@/components/Bits";
-import { INSTAGRAM } from "@/lib/brand";
-import { IconInsta, IconSparkle, Logo } from "@/components/icons";
+import { ContactChips } from "@/components/Contacts";
+import { IconSparkle, Logo } from "@/components/icons";
 
 type SP = Promise<{ top?: string }>;
 
@@ -161,11 +161,8 @@ export default async function Home({ searchParams }: { searchParams: SP }) {
       <footer className="mt-12 grid gap-4 border-t border-line pb-3 pt-7">
         <Logo />
         <p className="text-sm text-muted">{t(lang, "publisher")} · Оку. Өнүк. Токтобо.</p>
-        <div className="flex flex-wrap gap-2">
-          {INSTAGRAM.map((i) => (
-            <a key={i.handle} href={i.url} target="_blank" rel="noopener noreferrer" className="chip"><IconInsta className="h-4 w-4" /> @{i.handle}</a>
-          ))}
-        </div>
+        <p className="text-sm text-ink2">{t(lang, "order_ways")}</p>
+        <ContactChips />
         <span className="text-xs text-muted">© 2026 Toktobo</span>
       </footer>
     </div>

@@ -6,6 +6,8 @@ import { catName, LANG_NAME, som, t } from "@/lib/i18n";
 import { getAccessSet, getBook, getCategories, getPendingEbooks } from "@/lib/data";
 import { Cover } from "@/components/Cover";
 import { BONUS_PER_BOOK } from "@/lib/types";
+import { TELEGRAM_BOT, waShop } from "@/lib/brand";
+import { IconTelegram, IconWhatsApp } from "@/components/Contacts";
 import { IconBooks, IconEbook, IconLeft } from "@/components/icons";
 import { BookActions } from "./BookActions";
 
@@ -72,6 +74,15 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
               </div>
             ) : null}
           </div>
+          {book.paper_price ? (
+            <div className="grid gap-2 rounded-[20px] bg-soft p-4">
+              <span className="text-[14px] font-semibold">{t(lang, "order_other")}</span>
+              <div className="flex flex-wrap gap-2">
+                <a href={waShop(t(lang, "wa_book_msg", { t: book.title }))} target="_blank" rel="noopener noreferrer" className="chip !border-transparent !bg-[#25D366] !text-white"><IconWhatsApp className="h-4 w-4" /> WhatsApp</a>
+                <a href={TELEGRAM_BOT.url} target="_blank" rel="noopener noreferrer" className="chip !border-transparent !bg-[#229ED9] !text-white"><IconTelegram className="h-4 w-4" /> Telegram бот</a>
+              </div>
+            </div>
+          ) : null}
           <div className="flex flex-wrap gap-2">
             <Link href={`/coach?book=${book.id}`} className="btn btn-line btn-sm">{t(lang, "coach_btn")}</Link>
           </div>
