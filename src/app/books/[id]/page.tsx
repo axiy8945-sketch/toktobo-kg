@@ -5,6 +5,7 @@ import { getLang } from "@/lib/lang";
 import { catName, LANG_NAME, som, t } from "@/lib/i18n";
 import { getAccessSet, getBook, getCategories, getPendingEbooks } from "@/lib/data";
 import { Cover } from "@/components/Cover";
+import { BONUS_PER_BOOK } from "@/lib/types";
 import { IconBooks, IconEbook, IconLeft } from "@/components/icons";
 import { BookActions } from "./BookActions";
 
@@ -50,6 +51,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
                   </div>
                   <span className="whitespace-nowrap text-[19px] font-semibold tabular-nums">{book.ebook_mode === "free" ? t(lang, "free") : som(lang, book.ebook_price)}</span>
                 </div>
+                {book.ebook_mode === "paid" && ebookState === "none" && <span className="tag tag-on justify-self-start">{t(lang, "bonus_per_book", { n: BONUS_PER_BOOK })}</span>}
                 {ebookState === "owned" && <span className="state state-ok justify-self-start">{t(lang, "acc_on")}</span>}
                 {ebookState === "pending" && <span className="state state-wait justify-self-start">{t(lang, "acc_wait")}</span>}
                 <BookActions kind="ebook" bookId={book.id} mode={book.ebook_mode} state={ebookState} hasFile={!!book.file_path} loggedIn={!!user} />
@@ -65,6 +67,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
                   </div>
                   <span className="whitespace-nowrap text-[19px] font-semibold tabular-nums">{som(lang, book.paper_price)}</span>
                 </div>
+                <span className="tag tag-on justify-self-start">{t(lang, "bonus_per_book", { n: BONUS_PER_BOOK })}</span>
                 <BookActions kind="paper" bookId={book.id} mode={book.ebook_mode} state="none" hasFile={false} loggedIn={!!user} />
               </div>
             ) : null}

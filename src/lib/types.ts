@@ -37,3 +37,6 @@ export interface CartItem {
 
 export const BOOK_COLUMNS =
   "id,title,author,category_id,lang,description,cover_path,paper_price,ebook_mode,ebook_price,file_path,file_type,is_published,created_at";
+
+/** Ар бир сатылып алынган китеп үчүн бонус (маалымат базасындагы place_order менен бирдей болушу керек) */
+export const BONUS_PER_BOOK = 20;

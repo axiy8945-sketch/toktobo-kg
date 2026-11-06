@@ -18,7 +18,7 @@ export async function claimFreeBook(bookId: string): Promise<Result> {
 }
 
 export async function placeOrder(input: {
-  items: CartItem[]; name: string; phone: string; address: string; comment: string; pay: "mbank" | "cash";
+  items: CartItem[]; name: string; phone: string; address: string; comment: string; pay: "mbank" | "cash"; useBonus?: number;
 }): Promise<Result<{ id: string }>> {
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
@@ -32,10 +32,11 @@ export async function placeOrder(input: {
     p_address: input.address.slice(0, 300),
     p_comment: input.comment.slice(0, 1000),
     p_pay: input.pay === "cash" ? "cash" : "mbank",
+    p_use_bonus: Math.max(0, Math.floor(Number(input.useBonus) || 0)),
   });
   if (error) return { ok: false, error: error.message };
   const { data: o } = await sb.from("orders")
-    .select("number, name, phone, address, pay_method, total, order_items(title, kind, qty)")
+    .select("number, name, phone, address, pay_method, total, bonus_used, order_items(title, kind, qty)")
     .eq("id", data as string).single();
   if (o) await notifyNewOrder({ ...o, items: (o.order_items ?? []) as unknown as { title: string; kind: string; qty: number }[] });
   revalidatePath("/orders");

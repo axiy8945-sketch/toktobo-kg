@@ -5,6 +5,7 @@ import { t } from "@/lib/i18n";
 import { getStats } from "@/lib/data";
 import Link from "next/link";
 import { GoalPicker } from "./GoalPicker";
+import { BONUS_PER_BOOK } from "@/lib/types";
 import { ProfileEdit } from "./ProfileEdit";
 import type { Lang } from "@/lib/types";
 
@@ -40,6 +41,7 @@ export default async function ProgressPage() {
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("user_id", user.id),
     supabase.from("profiles").select("full_name, phone, created_at").eq("id", user.id).single(),
   ]);
+  const { data: bonusBal } = await supabase.rpc("bonus_balance");
   const name = me.data?.full_name || user.email?.split("@")[0] || t(lang, "reader_default");
   const joinedYear = new Date(me.data?.created_at ?? user.created_at).getFullYear();
   const s = stats!;
@@ -69,8 +71,20 @@ export default async function ProgressPage() {
         </div>
       </section>
 
+      {/* ---------- Бонус ---------- */}
+      <section className="pt-6">
+        <div className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-card bg-accent p-5 text-accent-ink">
+          <span className="grid h-14 w-14 place-items-center rounded-full border-[3px] border-accent-ink/80 text-2xl font-extrabold">B</span>
+          <div className="min-w-0">
+            <span className="text-[14px] font-medium opacity-80">{t(lang, "bonus_balance_t")}</span>
+            <b className="block text-[30px] font-extrabold leading-tight tabular-nums">{Number(bonusBal) || 0}</b>
+          </div>
+          <p className="col-span-2 text-[13px] opacity-80">{t(lang, "bonus_how", { n: BONUS_PER_BOOK })}</p>
+        </div>
+      </section>
+
       {/* ---------- Статистика плиткалары ---------- */}
-      <section className="grid grid-cols-2 gap-3 pt-6">
+      <section className="grid grid-cols-2 gap-3 pt-3">
         {([[t(lang, "total_read"), `${s.totalMin} ${t(lang, "m")}`], [t(lang, "last7"), `${s.last7Min} ${t(lang, "m")}`],
           [t(lang, "streak"), `${s.streak} ${t(lang, "d")}`], [t(lang, "quizzes_t"), String(quizzes.count ?? 0)]] as [string, string][]).map(([k, v]) => (
           <div key={k} className="tile grid gap-1.5">

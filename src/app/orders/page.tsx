@@ -11,7 +11,7 @@ export default async function OrdersPage() {
   if (!user) redirect("/login?next=/orders");
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, number, status, pay_method, total, created_at, order_items(kind, qty, title)")
+    .select("id, number, status, pay_method, total, bonus_used, bonus_earned, created_at, order_items(kind, qty, title)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -30,6 +30,12 @@ export default async function OrdersPage() {
               {(o.order_items as unknown as { kind: string; qty: number; title: string }[]).map((i) =>
                 `${i.title} (${i.kind === "ebook" ? t(lang, "kind_ebook") : t(lang, "kind_paper")})${i.qty > 1 ? " × " + i.qty : ""}`).join(", ")}
             </span>
+            {(o.bonus_used > 0 || o.bonus_earned > 0) && (
+              <span className="flex flex-wrap gap-1.5">
+                {o.bonus_used > 0 && <span className="tag">{t(lang, "bonus_used_n", { n: o.bonus_used })}</span>}
+                {o.bonus_earned > 0 && o.status !== "cancelled" && <span className="tag tag-on">{t(lang, "bonus_earned_n", { n: o.bonus_earned })}{o.status === "confirmed" ? " ✓" : ""}</span>}
+              </span>
+            )}
             <span className={`state justify-self-start ${o.status === "confirmed" ? "state-ok" : "state-wait"}`}>{t(lang, `s_${o.status}` as DictKey)}</span>
           </div>
         ))}

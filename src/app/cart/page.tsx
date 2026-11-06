@@ -7,7 +7,7 @@ import { IconArrow, IconInfo } from "@/components/icons";
 import { som, t } from "@/lib/i18n";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { placeOrder } from "@/app/actions";
-import type { Book } from "@/lib/types";
+import { BONUS_PER_BOOK, type Book } from "@/lib/types";
 
 type B = Pick<Book, "id" | "title" | "author" | "cover_path" | "paper_price" | "ebook_mode" | "ebook_price">;
 
@@ -18,8 +18,10 @@ export default function CartPage() {
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", address: "", comment: "", pay: "mbank" as "mbank" | "cash" });
   const [err, setErr] = useState("");
-  const [done, setDone] = useState<{ hasE: boolean; pay: string } | null>(null);
+  const [done, setDone] = useState<{ hasE: boolean; pay: string; earn: number } | null>(null);
   const [pending, start] = useTransition();
+  const [balance, setBalance] = useState(0);
+  const [useBonus, setUseBonus] = useState(false);
 
   const ids = useMemo(() => [...new Set(cart.items.map((i) => i.book_id))], [cart.items]);
   useEffect(() => {
@@ -29,6 +31,8 @@ export default function CartPage() {
       if (data.user) {
         const { data: p } = await sb.from("profiles").select("full_name, phone").eq("id", data.user.id).single();
         if (p) setForm((f) => ({ ...f, name: f.name || p.full_name || "", phone: f.phone || p.phone || "" }));
+        const { data: bal } = await sb.rpc("bonus_balance");
+        setBalance(Number(bal) || 0);
       }
     });
   }, []);
@@ -43,7 +47,11 @@ export default function CartPage() {
     const price = b ? (it.kind === "ebook" ? b.ebook_price : b.paper_price ?? 0) : 0;
     return { it, i, b, price };
   });
-  const total = lines.reduce((a, l) => a + l.price * l.it.qty, 0);
+  const subtotal = lines.reduce((a, l) => a + l.price * l.it.qty, 0);
+  const maxBonus = Math.min(balance, Math.floor(subtotal / 2));
+  const bonusOff = useBonus ? maxBonus : 0;
+  const total = subtotal - bonusOff;
+  const willEarn = cart.items.reduce((a, i) => a + (i.kind === "paper" ? i.qty : 1), 0) * BONUS_PER_BOOK;
   const needAddr = cart.items.some((i) => i.kind === "paper");
 
   function submit(e: React.FormEvent) {
@@ -52,9 +60,9 @@ export default function CartPage() {
     if (needAddr && !form.address.trim()) return setErr(t(lang, "err_addr"));
     setErr("");
     start(async () => {
-      const r = await placeOrder({ items: cart.items, ...form });
+      const r = await placeOrder({ items: cart.items, ...form, useBonus: bonusOff });
       if (!r.ok) return setErr(t(lang, "err_generic"));
-      setDone({ hasE: cart.items.some((i) => i.kind === "ebook"), pay: form.pay });
+      setDone({ hasE: cart.items.some((i) => i.kind === "ebook"), pay: form.pay, earn: willEarn });
       cart.clear();
     });
   }
@@ -63,7 +71,8 @@ export default function CartPage() {
     const steps = done.pay === "mbank" ? ["st1", "st2", "st3", "st4"] as const : ["st1", "st4"] as const;
     return (
       <div className="wrap max-w-[640px] pt-7">
-        <h1 className="text-[clamp(30px,8vw,44px)] font-semibold">{t(lang, "order_ok")}</h1>
+        <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "order_ok")}</h1>
+        {done.earn > 0 && <p className="note mt-3">{t(lang, "will_earn", { n: done.earn })}</p>}
         <ol className="my-5 grid gap-3">
           {[...steps, ...(done.hasE ? (["st5e"] as const) : [])].map((k, i) => (
             <li key={k} className="grid grid-cols-[30px_1fr] items-start gap-3 text-[15px]">
@@ -106,7 +115,19 @@ export default function CartPage() {
               </div>
             ))}
           </div>
+          {maxBonus > 0 && (
+            <label className={`mt-4 flex cursor-pointer items-center gap-3 rounded-2xl border p-4 ${useBonus ? "border-accent bg-accent-soft" : "border-line bg-card"}`}>
+              <input type="checkbox" checked={useBonus} onChange={(e) => setUseBonus(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--accent))]" />
+              <span className="min-w-0 flex-1">
+                <b className="block text-[15px]">{t(lang, "use_bonus", { n: maxBonus })}</b>
+                <span className="text-[13px] text-muted">{t(lang, "bonus_balance_n", { n: balance })} · {t(lang, "bonus_cap")}</span>
+              </span>
+              <span className="font-semibold tabular-nums text-accent-deep">−{som(lang, maxBonus)}</span>
+            </label>
+          )}
+          {bonusOff > 0 && <div className="flex justify-between pt-3 text-[15px] text-muted"><span>{t(lang, "bonus_t")}</span><span className="tabular-nums">−{som(lang, bonusOff)}</span></div>}
           <div className="flex items-baseline justify-between py-4 font-semibold"><span>{t(lang, "sum")}</span><b className="text-[22px] tabular-nums">{som(lang, total)}</b></div>
+          {willEarn > 0 && <p className="note mb-4"><span className="grid h-5 w-5 flex-none place-items-center rounded-full bg-accent text-[11px] font-bold text-accent-ink">B</span>{t(lang, "will_earn", { n: willEarn })}</p>}
 
           {loggedIn === false ? (
             <Link href="/login?next=/cart" className="btn w-full">{t(lang, "login_to")}</Link>

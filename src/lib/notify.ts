@@ -3,7 +3,7 @@ import "server-only";
 // Жаңы заказ тууралуу админге Telegram аркылуу билдирүү.
 // TELEGRAM_BOT_TOKEN жана TELEGRAM_CHAT_ID коюлбаса, эч нерсе жөнөтүлбөйт.
 export async function notifyNewOrder(o: {
-  number: number; name: string; phone: string; address: string | null; pay_method: string; total: number;
+  number: number; name: string; phone: string; address: string | null; pay_method: string; total: number; bonus_used?: number;
   items: { title: string; kind: string; qty: number }[];
 }) {
   const token = process.env.TELEGRAM_BOT_TOKEN, chat = process.env.TELEGRAM_CHAT_ID;
@@ -15,6 +15,7 @@ export async function notifyNewOrder(o: {
     o.address ? `📍 ${o.address}` : "",
     ...o.items.map((i) => `• ${i.title} (${i.kind === "ebook" ? "онлайн" : "кагаз"})${i.qty > 1 ? " × " + i.qty : ""}`),
     `💰 ${o.total.toLocaleString("ru-RU")} сом · ${o.pay_method === "mbank" ? "MBank QR" : "Накталай"}`,
+    o.bonus_used ? `🎁 Бонус менен төлөндү: ${o.bonus_used} сом` : "",
     site ? `${site}/admin/orders` : "",
   ].filter(Boolean);
   try {
