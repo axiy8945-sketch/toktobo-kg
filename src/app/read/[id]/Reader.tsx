@@ -112,8 +112,8 @@ export function Reader({ bookId, title, fileType, initialLocation, initialBookma
         if (cancelled) return;
 
         if (fileType === "pdf") {
-          const pdfjs = await import("pdfjs-dist");
-          pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
+          const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+          pdfjs.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.8.69/legacy/build/pdf.worker.min.mjs";
           const doc = (await pdfjs.getDocument({ url }).promise) as unknown as PdfDoc;
           if (cancelled) return doc.destroy();
           pdf.current = doc;

@@ -6,14 +6,17 @@ import { AI_LANG } from "@/lib/i18n";
 import type { Lang } from "@/lib/types";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
 const LIMIT = Number(process.env.AI_DAILY_LIMIT || 60);
 
 type Msg = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: Request) {
+  // Ачкыч курап жатканда эмес, сурам келгенде гана текшерилет
+  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: "ai_not_configured" }, { status: 503 });
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const sb = await supabaseServer();
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return NextResponse.json({ error: "auth" }, { status: 401 });

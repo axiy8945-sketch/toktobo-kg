@@ -56,6 +56,7 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
         body: JSON.stringify({ mode: "chat", lang, messages: next }),
       });
       if (res.status === 429) throw new Error("limit");
+      if (res.status === 503) throw new Error("off");
       if (!res.ok || !res.body) throw new Error("err");
       const reader = res.body.getReader();
       const dec = new TextDecoder();
@@ -70,7 +71,8 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
     } catch (e) {
       const aborted = (e as Error).name === "AbortError";
       setMsgs((m) => (m[m.length - 1]?.content ? m : m.slice(0, -1)));
-      if (!aborted) setErr((e as Error).message === "limit" ? t(lang, "ai_limit") : t(lang, "ai_err"));
+      const m = (e as Error).message;
+      if (!aborted) setErr(m === "limit" ? t(lang, "ai_limit") : m === "off" ? t(lang, "ai_off") : t(lang, "ai_err"));
     } finally {
       setBusy(false); ctl.current = null;
     }
@@ -81,11 +83,13 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
     try {
       const res = await fetch("/api/coach", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mode: "quiz", lang, bookId: quizBook }) });
       if (res.status === 429) throw new Error("limit");
+      if (res.status === 503) throw new Error("off");
       if (!res.ok) throw new Error("err");
       const j = (await res.json()) as { questions: Q[]; bookId: string; title: string };
       setQuiz({ bookId: j.bookId, title: j.title, qs: j.questions, i: 0, picked: null, score: 0 });
     } catch (e) {
-      setErr((e as Error).message === "limit" ? t(lang, "ai_limit") : t(lang, "ai_err"));
+      const m = (e as Error).message;
+      setErr(m === "limit" ? t(lang, "ai_limit") : m === "off" ? t(lang, "ai_off") : t(lang, "ai_err"));
     } finally { setQuizLoading(false); }
   }
   async function nextQ() {

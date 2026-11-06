@@ -139,6 +139,7 @@ const D = {
   stop: ["Токтотуу", "To'xtatish", "Стоп"],
   ai_disc: ["AI жооптору ката болушу мүмкүн.", "AI javoblarida xato bo'lishi mumkin.", "Ответы AI могут содержать ошибки."],
   ai_err: ["Байланыш үзүлдү. Кайра жөнөтүп көрүңүз.", "Aloqa uzildi. Qayta yuborib ko'ring.", "Связь прервалась. Попробуйте ещё раз."],
+  ai_off: ["AI коуч азырынча иштетиле элек. Китептер, окуу жана заказ иштей берет.", "AI murabbiy hali yoqilmagan. Kitoblar, o'qish va buyurtma ishlayveradi.", "AI-коуч ещё не подключён. Книги, чтение и заказы работают."],
   ai_limit: ["Бүгүнкү AI лимити бүттү. Эртең кайра жазыңыз.", "Bugungi AI limiti tugadi. Ertaga qayta yozing.", "Дневной лимит AI исчерпан. Напишите завтра."],
   c_hello: ["Салам! Мен ТОКТОБОнун окуу коучумун. Бүгүн китеп окудуңбу?", "Salom! Men Toktobo o'qish murabbiyiman. Bugun kitob o'qidingizmi?", "Привет! Я коуч по чтению ТОКТОБО. Вы сегодня читали?"],
   q_plan: ["Окуу планы", "O'qish rejasi", "План чтения"],
