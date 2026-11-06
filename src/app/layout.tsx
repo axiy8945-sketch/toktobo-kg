@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-dvh font-sans text-base leading-normal">
         <Providers lang={lang}>
           <Header lang={lang} loggedIn={!!user} isStaff={isStaff} today={stats ? { min: stats.todayMin, goal } : null} />
-          <main className="pb-[calc(100px+env(safe-area-inset-bottom))]">{children}</main>
+          <main className="pb-[calc(100px+env(safe-area-inset-bottom))] md:pb-16">{children}</main>
           <TabBar labels={labels} />
         </Providers>
       </body>

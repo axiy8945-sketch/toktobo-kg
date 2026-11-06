@@ -62,7 +62,18 @@ export function Header({ lang, loggedIn, isStaff, today }: {
     <>
       <header className="sticky top-0 z-30 border-b border-line bg-bg/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
         <div className="wrap flex items-center gap-1.5 py-2.5">
-          <Link href="/" className="mr-auto" aria-label="Toktobo"><Logo /></Link>
+          <Link href="/" className="mr-auto md:mr-6" aria-label="Toktobo"><Logo /></Link>
+          <nav className="mr-auto hidden items-center gap-1 md:flex" aria-label="Main">
+            {links.slice(0, 5).map(([href, label]) => {
+              const on = href === "/" ? path === "/" : path.startsWith(href);
+              return (
+                <Link key={href} href={href} aria-current={on ? "page" : undefined}
+                  className={`rounded-full px-3.5 py-2 text-[15px] font-medium ${on ? "bg-soft text-ink" : "text-muted hover:text-ink"}`}>
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
           {today && (
             <Link href="/progress" aria-label={`${t(lang, "today")}: ${today.min} ${t(lang, "m")}`}><TodayRing {...today} /></Link>
           )}
