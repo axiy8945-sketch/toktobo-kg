@@ -392,3 +392,18 @@ grant execute on function public.bump_ai_usage() to authenticated;
 grant execute on function public.claim_free_book(uuid) to authenticated;
 grant execute on function public.place_order(jsonb, text, text, text, text, text) to authenticated;
 grant execute on function public.set_order_status(uuid, text) to authenticated;
+
+-- ---------- Топ китептер (жеке маалыматсыз, саноо гана) ----------
+create or replace function public.top_books(p_days int default 1, p_limit int default 10)
+returns table(book_id uuid, readers bigint)
+language sql stable security definer set search_path = public as $$
+  select rp.book_id, count(distinct rp.user_id) as readers
+    from reading_progress rp
+    join books b on b.id = rp.book_id and b.is_published
+   where rp.updated_at > now() - make_interval(days => greatest(1, least(p_days, 365)))
+   group by rp.book_id
+   order by readers desc, rp.book_id
+   limit greatest(1, least(p_limit, 50));
+$$;
+revoke execute on function public.top_books(int, int) from public;
+grant execute on function public.top_books(int, int) to anon, authenticated;

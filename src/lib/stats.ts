@@ -32,5 +32,7 @@ export function computeStats(rows: DayRow[], goal: number) {
   const monthMin = Math.floor(rows.filter((r) => r.day.startsWith(month)).reduce((a, r) => a + r.seconds, 0) / 60);
   const totalMin = Math.floor(rows.reduce((a, r) => a + r.seconds, 0) / 60);
   const goalHit = rows.some((r) => r.seconds >= goal * 60);
-  return { todayMin, streak, week, monthMin, totalMin, goalHit };
+  let last7Min = 0;
+  for (let i = 0; i < 7; i++) last7Min += Math.floor((map.get(shift(today, -i)) ?? 0) / 60);
+  return { todayMin, streak, week, monthMin, totalMin, goalHit, last7Min };
 }

@@ -17,7 +17,7 @@ export default async function OrdersPage() {
 
   return (
     <div className="wrap max-w-[760px] pt-7">
-      <h1 className="text-[clamp(32px,9vw,52px)] font-semibold tracking-[-0.035em]">{t(lang, "nav_orders")}</h1>
+      <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "nav_orders")}</h1>
       <div className="mt-6 grid gap-3">
         {!orders?.length && <p className="text-muted">{t(lang, "orders_empty")}</p>}
         {orders?.map((o) => (

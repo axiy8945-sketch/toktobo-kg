@@ -21,7 +21,7 @@ export default async function AdminOrders({ searchParams }: { searchParams: Prom
       {orders?.map((o) => (
         <div key={o.id} className="grid gap-1.5 rounded-[18px] border border-line bg-card p-4 text-sm">
           <div className="flex justify-between gap-2.5 text-[15px] font-semibold"><span className="tabular-nums">№ {o.number}</span><span className="tabular-nums">{som(lang, o.total)}</span></div>
-          <span>{t(lang, "customer")}: <b>{o.name}</b> · <a href={`tel:${o.phone}`} className="tabular-nums text-accent">{o.phone}</a></span>
+          <span>{t(lang, "customer")}: <b>{o.name}</b> · <a href={`tel:${o.phone}`} className="tabular-nums text-accent-deep">{o.phone}</a></span>
           {o.address && <span className="text-muted">{o.address}</span>}
           {o.comment && <span className="text-muted">«{o.comment}»</span>}
           <ul className="my-1 grid gap-0.5">

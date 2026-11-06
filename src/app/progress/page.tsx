@@ -3,7 +3,9 @@ import { getSession } from "@/lib/supabase/server";
 import { getLang } from "@/lib/lang";
 import { t } from "@/lib/i18n";
 import { getStats } from "@/lib/data";
+import Link from "next/link";
 import { GoalPicker } from "./GoalPicker";
+import { ProfileEdit } from "./ProfileEdit";
 import type { Lang } from "@/lib/types";
 
 export const metadata = { title: "Прогресс" };
@@ -30,13 +32,16 @@ export default async function ProgressPage() {
   const { supabase, user, profile } = await getSession();
   if (!user) redirect("/login?next=/progress");
   const goal = profile?.daily_goal ?? 15;
-  const [stats, prog, notes, quizzes, orders] = await Promise.all([
+  const [stats, prog, notes, quizzes, orders, me] = await Promise.all([
     getStats(user.id, goal),
     supabase.from("reading_progress").select("finished").eq("user_id", user.id),
     supabase.from("notes").select("id", { count: "exact", head: true }).eq("user_id", user.id),
     supabase.from("quiz_results").select("id", { count: "exact", head: true }).eq("user_id", user.id),
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+    supabase.from("profiles").select("full_name, phone, created_at").eq("id", user.id).single(),
   ]);
+  const name = me.data?.full_name || user.email?.split("@")[0] || t(lang, "reader_default");
+  const joinedYear = new Date(me.data?.created_at ?? user.created_at).getFullYear();
   const s = stats!;
   const unlocked: Record<string, boolean> = {
     open: (prog.data ?? []).length > 0, goal: s.goalHit, s3: s.streak >= 3, s7: s.streak >= 7, hour: s.totalMin >= 60,
@@ -49,21 +54,37 @@ export default async function ProgressPage() {
 
   return (
     <div className="wrap">
-      <div className="grid gap-2.5 pt-7"><span className="eb">{t(lang, "stats_t")}</span>
-        <h1 className="text-[clamp(32px,9vw,52px)] font-semibold leading-[1.05] tracking-[-0.035em]">{t(lang, "nav_prog")}</h1></div>
-
-      <section className="pt-[22px]">
-        <div className="grid grid-cols-3 overflow-hidden rounded-card border border-line bg-card">
-          {[[s.streak, t(lang, "d"), t(lang, "streak")], [wm, t(lang, "m"), t(lang, "this_week")], [s.monthMin, t(lang, "m"), t(lang, "this_month")]].map(([v, u, k], i) => (
-            <div key={i} className="min-w-0 border-r border-line p-4 last:border-r-0">
-              <b className="block text-[26px] font-semibold tabular-nums">{v}<small className="ml-1 text-[13px] font-medium text-muted">{u}</small></b>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">{k}</span>
-            </div>
-          ))}
+      {/* ---------- Профиль башы ---------- */}
+      <section className="-mx-[18px] md:mx-0">
+        <div className="h-28 bg-gradient-to-br from-accent-soft via-accent/70 to-accent md:rounded-b-hero" />
+        <div className="px-[18px] md:px-0">
+          <div className="-mt-12 flex items-end gap-3">
+            <span className="grid h-24 w-24 flex-none place-items-center rounded-full border-4 border-bg bg-gradient-to-br from-accent to-accent-deep text-3xl font-bold text-accent-ink">
+              {name.trim()[0]?.toUpperCase() ?? "T"}
+            </span>
+            <ProfileEdit name={me.data?.full_name ?? ""} phone={me.data?.phone ?? ""} />
+          </div>
+          <h1 className="mt-3 text-[26px] font-bold">{name}</h1>
+          <p className="mt-1 text-[15px] text-muted">{user.email} · {t(lang, "joined", { y: joinedYear })}</p>
         </div>
       </section>
 
-      <section className="grid gap-4 pt-11">
+      {/* ---------- Статистика плиткалары ---------- */}
+      <section className="grid grid-cols-2 gap-3 pt-6">
+        {([[t(lang, "total_read"), `${s.totalMin} ${t(lang, "m")}`], [t(lang, "last7"), `${s.last7Min} ${t(lang, "m")}`],
+          [t(lang, "streak"), `${s.streak} ${t(lang, "d")}`], [t(lang, "quizzes_t"), String(quizzes.count ?? 0)]] as [string, string][]).map(([k, v]) => (
+          <div key={k} className="tile grid gap-1.5">
+            <span className="text-[14px] text-muted">{k}</span>
+            <b className="text-[24px] font-bold tabular-nums">{v}</b>
+          </div>
+        ))}
+      </section>
+      <div className="flex flex-wrap gap-2 pt-4">
+        <Link href="/orders" className="chip">{t(lang, "nav_orders")}</Link>
+        {(profile?.role === "staff" || profile?.role === "admin") && <Link href="/admin" className="chip">{t(lang, "nav_admin")}</Link>}
+      </div>
+
+      <section className="grid gap-4 pt-9">
         <span className="eb">{t(lang, "this_week")}</span>
         <div className="grid h-[170px] grid-cols-7 gap-2 rounded-card border border-line bg-card px-4 pb-3.5 pt-[18px]" role="img" aria-label={t(lang, "week_sum", { m: wm, d: wd })}>
           {s.week.map((d, i) => {
@@ -74,7 +95,7 @@ export default async function ProgressPage() {
                   <i className={`block rounded-t-md ${d.today ? "bg-accent" : "bg-accent-soft"}`} style={{ height: `${h}%` }} />
                   {d.min > 0 && <span className="absolute left-1/2 -translate-x-1/2 text-[10px] text-muted" style={{ bottom: `calc(${h}% + 4px)` }}>{d.min}</span>}
                 </div>
-                <small className={`font-mono text-[10px] ${d.today ? "font-semibold text-ink" : "text-muted"}`}>{WD[lang][i]}</small>
+                <small className={`text-[10px] ${d.today ? "font-semibold text-ink" : "text-muted"}`}>{WD[lang][i]}</small>
               </div>
             );
           })}
@@ -82,9 +103,9 @@ export default async function ProgressPage() {
         <p className="text-sm text-muted">{wm ? t(lang, "week_sum", { m: wm, d: wd }) : t(lang, "week_empty")}</p>
       </section>
 
-      <section className="grid gap-4 pt-11"><span className="eb">{t(lang, "goal_t")}</span><GoalPicker goal={goal} /></section>
+      <section className="grid gap-4 pt-9"><span className="eb">{t(lang, "goal_t")}</span><GoalPicker goal={goal} /></section>
 
-      <section className="grid gap-2.5 pt-11"><span className="eb">{t(lang, "chal_t")}</span>
+      <section className="grid gap-2.5 pt-9"><span className="eb">{t(lang, "chal_t")}</span>
         {chal.map(([n, a, b]) => (
           <div key={n} className="grid gap-2.5 rounded-[18px] border border-line bg-card px-4 py-3.5">
             <div className="flex justify-between gap-2.5 font-semibold">{n}<span className="font-mono text-xs font-medium text-muted">{a} / {b}</span></div>
@@ -93,12 +114,12 @@ export default async function ProgressPage() {
         ))}
       </section>
 
-      <section className="grid gap-4 pt-11">
+      <section className="grid gap-4 pt-9">
         <div className="flex justify-between"><span className="eb">{t(lang, "ach_t")}</span><span className="text-sm tabular-nums text-muted">{Object.values(unlocked).filter(Boolean).length} / {ACH.length}</span></div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(102px,1fr))] gap-2.5">
           {ACH.map((a) => (
             <div key={a.id} className={`grid justify-items-center gap-1.5 rounded-[18px] border border-line bg-card px-2 py-3.5 text-center ${unlocked[a.id] ? "" : "opacity-50"}`}>
-              <span className={`grid h-10 w-10 place-items-center rounded-full border ${unlocked[a.id] ? "border-accent bg-accent-soft text-accent" : "border-line text-muted"}`}>★</span>
+              <span className={`grid h-10 w-10 place-items-center rounded-full border ${unlocked[a.id] ? "border-accent bg-accent-soft text-accent-deep" : "border-line text-muted"}`}>★</span>
               <b className="text-[13px] leading-tight">{a.n[li]}</b>
               <span className="text-[11px] leading-snug text-muted">{a.d[li]}</span>
             </div>

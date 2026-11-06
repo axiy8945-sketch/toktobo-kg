@@ -3,96 +3,134 @@ import { getSession } from "@/lib/supabase/server";
 import { getLang } from "@/lib/lang";
 import { catName, t } from "@/lib/i18n";
 import { getAccessSet, getBooks, getCategories, getStats } from "@/lib/data";
-import { BookCard } from "@/components/BookCard";
-import { Cover } from "@/components/Cover";
-import { IconArrow, IconNE } from "@/components/icons";
+import { BookGrid } from "@/components/BookCard";
+import { Ornament, RUBRIC_COLORS, SecHead, Shelf } from "@/components/Bits";
+import { INSTAGRAM } from "@/lib/brand";
+import { IconInsta, IconSparkle, Logo } from "@/components/icons";
 
-export default async function Home() {
+type SP = Promise<{ top?: string }>;
+
+export default async function Home({ searchParams }: { searchParams: SP }) {
+  const { top = "1" } = await searchParams;
+  const days = top === "30" ? 30 : top === "7" ? 7 : 1;
   const lang = await getLang();
-  const { user, profile } = await getSession();
+  const { supabase, user, profile } = await getSession();
   const goal = profile?.daily_goal ?? 15;
-  const [books, cats, access, stats] = await Promise.all([getBooks(), getCategories(), getAccessSet(user?.id), getStats(user?.id, goal)]);
-  const hero = books.find((b) => b.cover_path) ?? books[0];
-  const free = books.filter((b) => b.ebook_mode === "free").slice(0, 4);
-  const topics = cats.map((c) => ({ c, list: books.filter((b) => b.category_id === c.id) })).filter((x) => x.list.length);
-  const [l1, l2, l3] = t(lang, "hero_t").split("|");
 
-  const m = stats?.todayMin ?? 0, s = stats?.streak ?? 0, p = Math.min(1, m / goal), C = 2 * Math.PI * 42;
+  const [books, cats, access, stats, topRes] = await Promise.all([
+    getBooks(), getCategories(), getAccessSet(user?.id), getStats(user?.id, goal),
+    supabase.rpc("top_books", { p_days: days, p_limit: 4 }),
+  ]);
+
+  const byId = new Map(books.map((b) => [b.id, b]));
+  const shelf = [...books.filter((b) => b.cover_path), ...books.filter((b) => !b.cover_path)].slice(0, 3);
+  const fresh = books.slice(0, 4);
+  const free = books.filter((b) => b.ebook_mode === "free").slice(0, 4);
+  const topRows = ((topRes.data ?? []) as { book_id: string; readers: number }[]).filter((r) => byId.has(r.book_id));
+  const topBooks = topRows.map((r) => byId.get(r.book_id)!);
+  const topNotes = new Map(topRows.map((r) => [r.book_id, t(lang, "readers_n", { n: r.readers })]));
+
+  const authors = [...books.reduce((m, b) => m.set(b.author, (m.get(b.author) ?? 0) + 1), new Map<string, number>())]
+    .sort((a, b) => b[1] - a[1]).slice(0, 12);
+  const rubrics = cats.map((c) => ({ c, n: books.filter((b) => b.category_id === c.id).length })).filter((x) => x.n);
+
+  const m = stats?.todayMin ?? 0, s = stats?.streak ?? 0, p = Math.min(1, m / goal), C = 2 * Math.PI * 34;
+  const periods: [string, Parameters<typeof t>[1]][] = [["1", "per_day"], ["7", "per_week"], ["30", "per_month"]];
 
   return (
     <div className="wrap">
-      <section className="mt-5 grid gap-[22px] overflow-hidden rounded-hero bg-soft px-6 pb-[30px] pt-[34px] md:grid-cols-[1.2fr_.8fr] md:items-center md:p-14">
-        <div className="grid gap-[22px]">
-          <h1 className="text-[clamp(40px,11.5vw,72px)] font-semibold leading-[1.02] tracking-[-0.035em]">
-            <span className="block">{l1}</span><span className="block">{l2}</span><span className="block text-accent">{l3}</span>
-          </h1>
-          <p className="max-w-[32ch] text-[19px] leading-relaxed text-ink2">{t(lang, "hero_p")}</p>
-          <div className="grid justify-items-start gap-3">
-            <Link href="/books" className="btn">{t(lang, "cta_books")} <IconArrow className="h-[18px] w-[18px]" /></Link>
-            <Link href="/library" className="btn btn-line">{t(lang, "cta_read")} <IconArrow className="h-[18px] w-[18px]" /></Link>
-          </div>
+      {/* ---------- Баш бөлүк: текчедеги китептер ---------- */}
+      <section className="mt-4 grid gap-5 overflow-hidden rounded-hero bg-soft px-5 pb-7 pt-8 text-center md:grid-cols-2 md:items-center md:px-10 md:py-12 md:text-left">
+        <div className="grid justify-items-center gap-3 md:justify-items-start">
+          <h1 className="text-[clamp(26px,7.4vw,44px)] font-bold leading-tight">{t(lang, "hero2_t")}</h1>
+          <p className="max-w-[36ch] text-[16px] leading-relaxed text-ink2">{t(lang, "hero2_p")}</p>
+          <Link href="/books" className="btn mt-2">{t(lang, "start")}</Link>
         </div>
-        {hero && (
-          <Link href={`/books/${hero.id}`} className="mt-1.5 w-[min(270px,72%)] justify-self-center md:w-full">
-            <Cover book={hero} className="shadow-book" />
-          </Link>
-        )}
+        {shelf.length > 0 && <div className="mt-3"><Shelf books={shelf} /></div>}
       </section>
 
-      <section className="grid gap-[22px] pt-11">
-        <span className="eb">{t(lang, "eb_today")}</span>
-        <div className="grid grid-cols-[auto_1fr] items-center gap-[18px] rounded-card border border-line bg-card p-[22px]">
-          <div className="relative h-24 w-24">
-            <svg viewBox="0 0 96 96" className="h-full w-full -rotate-90" aria-hidden="true">
-              <circle cx="48" cy="48" r="42" fill="none" stroke="rgb(var(--soft-2))" strokeWidth="7" />
-              <circle cx="48" cy="48" r="42" fill="none" stroke="rgb(var(--accent))" strokeWidth="7" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - p)} />
-            </svg>
-            <div className="absolute inset-0 grid place-items-center text-center leading-tight">
-              <span><b className="block text-2xl font-semibold tabular-nums">{m}</b><small className="text-[11px] text-muted">{t(lang, "of_goal", { g: goal })}</small></span>
+      {/* ---------- Бүгүнкү окуу ---------- */}
+      {user && (
+        <section className="pt-6">
+          <Link href="/progress" className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-card border border-line bg-card p-4">
+            <div className="relative h-[76px] w-[76px]">
+              <svg viewBox="0 0 76 76" className="h-full w-full -rotate-90" aria-hidden="true">
+                <circle cx="38" cy="38" r="34" fill="none" stroke="rgb(var(--soft-2))" strokeWidth="6" />
+                <circle cx="38" cy="38" r="34" fill="none" stroke="rgb(var(--accent))" strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - p)} />
+              </svg>
+              <span className="absolute inset-0 grid place-items-center text-center leading-tight">
+                <span><b className="block text-xl font-bold tabular-nums">{m}</b><small className="text-[10px] text-muted">{t(lang, "of_goal", { g: goal })}</small></span>
+              </span>
             </div>
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-xl font-semibold">{m >= goal ? t(lang, "goal_done") : t(lang, "task", { n: goal })}</h3>
-            <p className="mb-3 mt-1 text-sm text-muted">
-              {!user ? t(lang, "today_guest") : m >= goal ? t(lang, "today_p2", { s }) : m > 0 || s > 0 ? t(lang, "today_p1", { r: goal - m, s }) : t(lang, "today_p0")}
-            </p>
-            <Link href={user ? "/library" : "/login"} className="btn btn-sm">{user ? t(lang, "start") : t(lang, "login")}</Link>
-          </div>
-        </div>
+            <div className="min-w-0">
+              <b className="block text-[17px]">{m >= goal ? t(lang, "goal_done") : t(lang, "task", { n: goal })}</b>
+              <span className="text-sm text-muted">{m >= goal ? t(lang, "today_p2", { s }) : m > 0 || s > 0 ? t(lang, "today_p1", { r: goal - m, s }) : t(lang, "today_p0")}</span>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {/* ---------- Жаңы китептер ---------- */}
+      <section className="grid gap-4 pt-9">
+        <SecHead title={t(lang, "new_t")} href="/books" more={t(lang, "see_all")} />
+        {fresh.length
+          ? <BookGrid books={fresh} lang={lang} owned={access} />
+          : <p className="rounded-card border border-dashed border-line p-7 text-center text-muted">{t(lang, "no_books")}</p>}
       </section>
 
-      <section className="grid gap-[22px] pt-11">
-        <div className="flex items-end justify-between gap-4">
-          <div className="grid gap-2.5"><span className="eb">{t(lang, "eb_books")}</span><h2 className="h2">{t(lang, "new_t")}</h2></div>
-          <Link href="/books" className="lnk">{t(lang, "all")} <IconNE className="h-4 w-4" /></Link>
-        </div>
-        {books.length ? (
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 md:gap-[18px] lg:grid-cols-4">
-            {books.slice(0, 8).map((b) => <BookCard key={b.id} book={b} lang={lang} owned={access.has(b.id)} />)}
+      {/* ---------- Топ китептер ---------- */}
+      <section className="grid gap-4 pt-9">
+        <SecHead title={t(lang, "top_t")}>
+          <div className="flex gap-1">
+            {periods.map(([v, k]) => (
+              <Link key={v} href={v === "1" ? "/" : `/?top=${v}`} scroll={false} aria-current={String(days) === v ? "page" : undefined}
+                className={`rounded-full px-3.5 py-1.5 text-[14px] font-medium ${String(days) === v ? "bg-soft-2 text-ink shadow-sm" : "text-muted"}`}>
+                {t(lang, k)}
+              </Link>
+            ))}
           </div>
-        ) : <p className="rounded-card border border-dashed border-line p-7 text-center text-muted">{t(lang, "no_books")}</p>}
+        </SecHead>
+        {topBooks.length
+          ? <BookGrid books={topBooks} lang={lang} owned={access} notes={topNotes} />
+          : <p className="tile text-center text-[15px] text-muted">{t(lang, "top_empty")}</p>}
       </section>
 
-      {free.length > 0 && (
-        <section className="grid gap-[22px] pt-11">
-          <div className="grid gap-2.5"><span className="eb">{t(lang, "eb_free")}</span><h2 className="h2">{t(lang, "free_t")}</h2></div>
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 lg:grid-cols-4">
-            {free.map((b) => <BookCard key={b.id} book={b} lang={lang} owned={access.has(b.id)} />)}
+      {/* ---------- Авторлор ---------- */}
+      {authors.length > 0 && (
+        <section className="grid gap-4 pt-9">
+          <SecHead title={t(lang, "authors_t")} href="/books" more={t(lang, "see_all")} />
+          <div className="no-scrollbar -mx-[18px] flex gap-3 overflow-x-auto px-[18px] pb-1">
+            {authors.map(([name, n]) => (
+              <Link key={name} href={`/books?q=${encodeURIComponent(name)}`} className="flex w-[230px] flex-none items-center gap-3 rounded-[20px] bg-soft p-3 pr-4">
+                <span className="grid h-14 w-14 flex-none place-items-center rounded-full bg-accent-soft text-lg font-bold text-accent-deep">
+                  {name.replace(/[^\p{L}\s]/gu, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "•"}
+                </span>
+                <span className="min-w-0">
+                  <b className="block truncate text-[16px] font-semibold">{name}</b>
+                  <span className="text-[14px] text-muted">{t(lang, "n_books", { n })}</span>
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
       )}
 
-      {topics.length > 0 && (
-        <section className="grid gap-[22px] pt-11">
-          <div className="grid gap-2.5"><span className="eb">{t(lang, "eb_topic")}</span><h2 className="h2">{t(lang, "topic_t")}</h2></div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {topics.map(({ c, list }) => {
-              const b = list.find((x) => x.cover_path) ?? list[0];
+      {/* ---------- Рубрикалар ---------- */}
+      {rubrics.length > 0 && (
+        <section className="grid gap-4 pt-9">
+          <SecHead title={t(lang, "rubrics_t")} href="/books" more={t(lang, "see_all")} />
+          <div className="no-scrollbar -mx-[18px] flex gap-3 overflow-x-auto px-[18px] pb-1">
+            {rubrics.map(({ c, n }) => {
+              const [bg, fg] = RUBRIC_COLORS[c.id] ?? ["#EEE", "#333"];
               return (
-                <Link key={c.id} href={`/books?cat=${c.id}`} className="grid gap-2 rounded-card bg-soft px-[26px] pb-7 pt-[30px]">
-                  <Cover book={b} className="mb-[22px] w-[min(230px,62%)] justify-self-center shadow-book" />
-                  <b className="text-2xl font-medium tracking-[-0.02em]">{catName(lang, c)}</b>
-                  <span className="text-[17px] text-muted">{t(lang, "n_books", { n: list.length })}</span>
+                <Link key={c.id} href={`/books?cat=${c.id}`} className="grid w-[150px] flex-none gap-2">
+                  <span className="grid aspect-[4/5] place-items-center rounded-[20px]" style={{ background: bg }}>
+                    <Ornament color={fg} className="w-[70%]" />
+                  </span>
+                  <span className="min-w-0">
+                    <b className="block truncate text-[15px] font-semibold">{catName(lang, c)}</b>
+                    <span className="text-[13px] text-muted">{t(lang, "n_books", { n })}</span>
+                  </span>
                 </Link>
               );
             })}
@@ -100,18 +138,35 @@ export default async function Home() {
         </section>
       )}
 
-      <section className="pt-11">
-        <div className="grid gap-3.5 rounded-card bg-accent px-6 py-7 text-accent-ink">
-          <span className="font-mono text-[13px] uppercase tracking-[0.16em] opacity-75">{t(lang, "eb_coach")}</span>
-          <h3 className="text-[26px] font-semibold leading-tight">{t(lang, "coach_t")}</h3>
-          <p className="opacity-85">{t(lang, "coach_p")}</p>
-          <Link href="/coach" className="btn btn-sm justify-self-start !bg-accent-ink !text-accent">{t(lang, "coach_btn")} <IconArrow className="h-4 w-4" /></Link>
-        </div>
+      {/* ---------- Акысыз окуу ---------- */}
+      {free.length > 0 && (
+        <section className="grid gap-4 pt-9">
+          <SecHead title={t(lang, "free_t")} href="/books?fmt=ebook" more={t(lang, "see_all")} />
+          <BookGrid books={free} lang={lang} owned={access} />
+        </section>
+      )}
+
+      {/* ---------- AI коуч ---------- */}
+      <section className="pt-9">
+        <Link href="/coach" className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-card bg-accent p-5 text-accent-ink">
+          <span className="grid h-14 w-14 place-items-center rounded-full bg-white/50"><IconSparkle className="h-7 w-7" /></span>
+          <span className="min-w-0">
+            <b className="block text-[18px]">{t(lang, "coach_t")}</b>
+            <span className="text-[14px] opacity-80">{t(lang, "coach_p")}</span>
+          </span>
+        </Link>
       </section>
 
-      <footer className="mt-14 grid gap-2.5 border-t border-line pb-2.5 pt-7 text-sm text-muted">
-        <span className="font-semibold tracking-[0.06em] text-ink">ТОКТОБО KG</span>
-        <span>© 2026 ТОКТОБО KG</span>
+      {/* ---------- Футер ---------- */}
+      <footer className="mt-12 grid gap-4 border-t border-line pb-3 pt-7">
+        <Logo />
+        <p className="text-sm text-muted">{t(lang, "publisher")} · Оку. Өнүк. Токтобо.</p>
+        <div className="flex flex-wrap gap-2">
+          {INSTAGRAM.map((i) => (
+            <a key={i.handle} href={i.url} target="_blank" rel="noopener noreferrer" className="chip"><IconInsta className="h-4 w-4" /> @{i.handle}</a>
+          ))}
+        </div>
+        <span className="text-xs text-muted">© 2026 Toktobo</span>
       </footer>
     </div>
   );

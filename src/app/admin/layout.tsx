@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="wrap">
       <div className="grid gap-2.5 pt-7">
         <span className="eb">ТОКТОБО KG</span>
-        <h1 className="text-[clamp(32px,9vw,52px)] font-semibold leading-[1.05] tracking-[-0.035em]">{t(lang, "nav_admin")}</h1>
+        <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "nav_admin")}</h1>
       </div>
       <AdminTabs isAdmin={profile?.role === "admin"} labels={{ books: t(lang, "a_books"), orders: t(lang, "a_orders"), access: t(lang, "a_access"), staff: t(lang, "a_staff") }} />
       <div className="pt-5">{children}</div>

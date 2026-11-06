@@ -18,7 +18,7 @@ export default async function CoachPage({ searchParams }: { searchParams: Promis
     <div className="wrap max-w-[760px]">
       <div className="grid gap-2.5 pt-7">
         <span className="eb">{t(lang, "eb_coach")}</span>
-        <h1 className="text-[clamp(32px,9vw,52px)] font-semibold leading-[1.05] tracking-[-0.035em]">{t(lang, "coach_t")}</h1>
+        <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "coach_t")}</h1>
         <span className="text-sm text-muted">{t(lang, "ai_disc")}</span>
       </div>
       {user ? (

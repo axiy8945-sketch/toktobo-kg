@@ -20,12 +20,31 @@ export const IconSend = ({ className }: P) => (<svg viewBox="0 0 24 24" classNam
 export const IconSearch = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={2}><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>);
 export const IconChevron = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={2.2}><path d="m6 9 6 6 6-6" /></svg>);
 
+export const IconUser = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" /></svg>);
+export const IconSparkle = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><path d="M12 3c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8z" /></svg>);
+export const IconLibrary = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><rect x="4" y="3" width="13" height="18" rx="2" /><path d="M17 6h1.5A1.5 1.5 0 0 1 20 7.5V19a2 2 0 0 1-2 2H7" /><path d="M8 3v8l2.2-1.5L12.5 11V3" /></svg>);
+export const IconList = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><path d="m4 6 1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6.5h9M11 12.5h9M11 18.5h9" /></svg>);
+export const IconCheck = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><path d="M5 12.5 10 17l9-10" /></svg>);
+export const IconClock = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>);
+export const IconInsta = ({ className }: P) => (<svg viewBox="0 0 24 24" className={className} {...base}><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.3" cy="6.7" r=".8" fill="currentColor" /></svg>);
+
+/** Токтобо белгиси: сары тегерек ичинде кара китептер тизмеги */
 export const Mark = ({ className }: P) => (
   <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
-    <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="2.6" />
-    <g stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" fill="none">
-      <path d="M12 18.5Q24 16 36 18.5M10 24h28M12 29.5Q24 32 36 29.5" />
-      <path d="M18.5 12Q16 24 18.5 36M24 10v28M29.5 12Q32 24 29.5 36" />
+    <circle cx="24" cy="24" r="24" fill="rgb(var(--accent))" />
+    <g fill="#171717">
+      <rect x="15" y="12" width="18" height="5.5" rx="1.6" transform="rotate(-7 24 14.75)" />
+      <rect x="13.5" y="20" width="21" height="5.5" rx="1.6" />
+      <rect x="15" y="28" width="18" height="5.5" rx="1.6" transform="rotate(5 24 30.75)" />
     </g>
+    <path d="M16.5 36.5h15" stroke="#171717" strokeWidth="2.2" strokeLinecap="round" />
   </svg>
+);
+
+/** Логотип: белги + «Toktobo» жазуусу */
+export const Logo = ({ className = "" }: P) => (
+  <span className={`inline-flex items-center gap-2 ${className}`}>
+    <Mark className="h-9 w-9 flex-none" />
+    <span className="font-script text-[24px] leading-none text-ink">Toktobo</span>
+  </span>
 );

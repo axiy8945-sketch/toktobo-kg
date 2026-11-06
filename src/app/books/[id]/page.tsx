@@ -43,7 +43,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             {book.ebook_mode !== "none" && (
               <div className="grid gap-3 rounded-[20px] border border-line bg-card p-[18px]">
                 <div className="flex items-center gap-3">
-                  <IconEbook className="h-6 w-6 flex-none text-accent" />
+                  <IconEbook className="h-6 w-6 flex-none text-accent-deep" />
                   <div className="min-w-0 flex-1">
                     <b className="block text-[17px] font-semibold">{t(lang, "ebook")}</b>
                     <span className="text-[13px] text-muted">{book.ebook_mode === "free" ? t(lang, "eb_free_d") : t(lang, "eb_paid_d")}</span>
@@ -58,7 +58,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             {book.paper_price ? (
               <div className="grid gap-3 rounded-[20px] border border-line bg-card p-[18px]">
                 <div className="flex items-center gap-3">
-                  <IconBooks className="h-6 w-6 flex-none text-accent" />
+                  <IconBooks className="h-6 w-6 flex-none text-accent-deep" />
                   <div className="min-w-0 flex-1">
                     <b className="block text-[17px] font-semibold">{t(lang, "paper")}</b>
                     <span className="text-[13px] text-muted">{t(lang, "paper_d")}</span>

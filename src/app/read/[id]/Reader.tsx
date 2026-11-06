@@ -213,7 +213,7 @@ export function Reader({ bookId, title, fileType, initialLocation, initialBookma
       <div className="flex items-center gap-2 border-b border-line px-3.5 py-2.5">
         <Link href="/library" className={tool} aria-label={t(lang, "back")}><IconLeft className="h-[18px] w-[18px]" /></Link>
         <div className="min-w-0 flex-1 truncate text-[15px] font-semibold">{title}</div>
-        <span className="font-mono text-[13px] tabular-nums text-accent">{mmss}</span>
+        <span className="font-mono text-[13px] tabular-nums text-accent-deep">{mmss}</span>
         <button className={tool} onClick={() => setFont((f) => Math.max(80, f - 10))} aria-label="A-">A−</button>
         <button className={tool} onClick={() => setFont((f) => Math.min(160, f + 10))} aria-label="A+">A+</button>
         <button className={`${tool} ${marked ? "!border-transparent !bg-accent !text-accent-ink" : ""}`} onClick={toggleMark} aria-pressed={!!marked} aria-label={t(lang, "bookmarks")} disabled={status !== "ready"}>
@@ -250,7 +250,7 @@ export function Reader({ bookId, title, fileType, initialLocation, initialBookma
             {notes.map((n) => (
               <div key={n.id} className="grid gap-1 rounded-xl border border-line p-3 text-sm">
                 <p className="whitespace-pre-wrap">{n.body}</p>
-                <div className="flex gap-3"><button className="text-accent" onClick={() => jump(n.location)}>{t(lang, "cont")}</button><button className="text-bad" onClick={() => delNote(n.id)}>{t(lang, "del")}</button></div>
+                <div className="flex gap-3"><button className="text-accent-deep" onClick={() => jump(n.location)}>{t(lang, "cont")}</button><button className="text-bad" onClick={() => delNote(n.id)}>{t(lang, "del")}</button></div>
               </div>
             ))}
             <span className="eb pt-2">{t(lang, "bookmarks")}</span>

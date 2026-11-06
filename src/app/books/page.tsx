@@ -3,15 +3,15 @@ import { getSession } from "@/lib/supabase/server";
 import { getLang } from "@/lib/lang";
 import { catName, t } from "@/lib/i18n";
 import { getAccessSet, getBooks, getCategories } from "@/lib/data";
-import { BookCard } from "@/components/BookCard";
+import { BookGrid } from "@/components/BookCard";
 import { IconSearch } from "@/components/icons";
 
 export const metadata = { title: "Китептер" };
 
-type SP = Promise<{ q?: string; cat?: string; fmt?: string }>;
+type SP = Promise<{ q?: string; cat?: string; fmt?: string; focus?: string }>;
 
 export default async function BooksPage({ searchParams }: { searchParams: SP }) {
-  const { q = "", cat = "", fmt = "all" } = await searchParams;
+  const { q = "", cat = "", fmt = "all", focus } = await searchParams;
   const lang = await getLang();
   const { user } = await getSession();
   const [books, cats, access] = await Promise.all([getBooks(), getCategories(), getAccessSet(user?.id)]);
@@ -38,16 +38,15 @@ export default async function BooksPage({ searchParams }: { searchParams: SP }) 
 
   return (
     <div className="wrap">
-      <div className="grid gap-2.5 pt-7">
-        <span className="eb">{t(lang, "eb_books")}</span>
-        <h1 className="text-[clamp(32px,9vw,52px)] font-semibold leading-[1.05] tracking-[-0.035em]">{t(lang, "all_books")}</h1>
+      <div className="pt-6">
+        <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "all_books")}</h1>
       </div>
       <section className="grid gap-3.5 pt-[22px]">
         <form action="/books" className="flex items-center gap-2.5 rounded-2xl bg-soft px-4">
           <IconSearch className="h-5 w-5 flex-none text-muted" />
           {cat && <input type="hidden" name="cat" value={cat} />}
           {fmt !== "all" && <input type="hidden" name="fmt" value={fmt} />}
-          <input name="q" type="search" defaultValue={q} placeholder={t(lang, "search_ph")} aria-label={t(lang, "search_ph")}
+          <input name="q" type="search" defaultValue={q} autoFocus={focus === "1"} placeholder={t(lang, "search_ph")} aria-label={t(lang, "search_ph")}
             className="min-w-0 flex-1 bg-transparent py-[15px] text-base outline-none" />
         </form>
         <div className="no-scrollbar -mx-0.5 flex gap-2 overflow-x-auto px-0.5 pb-1">
@@ -66,9 +65,7 @@ export default async function BooksPage({ searchParams }: { searchParams: SP }) 
       </section>
       <section className="pt-[18px]">
         {list.length ? (
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 md:gap-[18px] lg:grid-cols-4">
-            {list.map((b) => <BookCard key={b.id} book={b} lang={lang} owned={access.has(b.id)} />)}
-          </div>
+          <BookGrid books={list} lang={lang} owned={access} />
         ) : <p className="rounded-card border border-dashed border-line p-7 text-center text-muted">{t(lang, "no_results")}</p>}
       </section>
     </div>

@@ -79,7 +79,7 @@ export default function CartPage() {
 
   return (
     <div className="wrap max-w-[720px] pt-7">
-      <h1 className="text-[clamp(32px,9vw,52px)] font-semibold tracking-[-0.035em]">{t(lang, "cart")}</h1>
+      <h1 className="text-[clamp(26px,7vw,36px)] font-bold">{t(lang, "cart")}</h1>
       {!cart.items.length ? (
         <div className="mt-6 grid justify-items-center gap-3.5 rounded-card border border-dashed border-line p-7 text-center text-muted">
           {t(lang, "cart_empty")}<Link href="/books" className="btn btn-sm">{t(lang, "nav_books")}</Link>

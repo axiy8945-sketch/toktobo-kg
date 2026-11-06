@@ -53,3 +53,16 @@ export async function setDailyGoal(goal: number): Promise<Result> {
   revalidatePath("/");
   return { ok: true };
 }
+
+export async function updateProfile(input: { full_name: string; phone: string }): Promise<Result> {
+  const sb = await supabaseServer();
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return { ok: false, error: "auth" };
+  const { error } = await sb.from("profiles").update({
+    full_name: input.full_name.trim().slice(0, 80) || null,
+    phone: input.phone.trim().slice(0, 30) || null,
+  }).eq("id", user.id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/progress");
+  return { ok: true };
+}
