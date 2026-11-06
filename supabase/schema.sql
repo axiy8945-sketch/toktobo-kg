@@ -407,3 +407,15 @@ language sql stable security definer set search_path = public as $$
 $$;
 revoke execute on function public.top_books(int, int) from public;
 grant execute on function public.top_books(int, int) to anon, authenticated;
+
+-- ---------- Катталганда аты профилге; ээсинин email'и автоматтык админ ----------
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.profiles (id, full_name, role)
+  values (new.id, nullif(left(trim(new.raw_user_meta_data->>'full_name'), 80), ''),
+    case when lower(new.email) = 'axiy8945@gmail.com' then 'admin'::public.user_role else 'reader'::public.user_role end)
+  on conflict (id) do nothing;
+  return new;
+end $$;
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
