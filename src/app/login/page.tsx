@@ -51,7 +51,7 @@ function LoginForm() {
 
   return (
     <div className="wrap max-w-[480px] pt-8">
-      <div className="grid gap-5 rounded-hero bg-soft p-6">
+      <div className="grid gap-5 rounded-hero glass p-6">
         <Logo />
         <div className="grid grid-cols-2 gap-1 rounded-full bg-soft-2 p-1" role="tablist">
           {(["login", "signup"] as Mode[]).map((m) => (

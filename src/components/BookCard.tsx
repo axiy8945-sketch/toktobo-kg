@@ -15,7 +15,7 @@ export function priceLine(lang: Lang, b: Book) {
 export function BookCard({ book, lang, owned = false, note }: { book: Book; lang: Lang; owned?: boolean; note?: string }) {
   const href = owned && book.file_path ? `/read/${book.id}` : `/books/${book.id}`;
   return (
-    <article className="grid min-w-0 content-start justify-items-center gap-3 bg-card px-4 pb-5 pt-6 text-center">
+    <article className="grid min-w-0 content-start justify-items-center gap-3 bg-card/55 px-4 pb-5 pt-6 text-center">
       <Link href={`/books/${book.id}`} className="grid w-full justify-items-center gap-3 rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
         <Cover book={book} className="w-[76%] shadow-book" />
         <div className="w-full min-w-0">
@@ -38,11 +38,11 @@ export function BookGrid({ books, lang, owned, notes }: { books: Book[]; lang: L
   const p2 = (2 - (n % 2)) % 2, p3 = (3 - (n % 3)) % 3, p4 = (4 - (n % 4)) % 4;
   const pads = Math.max(p2, p3, p4);
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card glass-frame md:grid-cols-3 lg:grid-cols-4">
       {books.map((b) => <BookCard key={b.id} book={b} lang={lang} owned={owned.has(b.id)} note={notes?.get(b.id)} />)}
       {Array.from({ length: pads }, (_, i) => (
         <div key={`pad${i}`} aria-hidden="true"
-          className={`bg-card ${i < p2 ? "block" : "hidden"} ${i < p3 ? "md:block" : "md:hidden"} ${i < p4 ? "lg:block" : "lg:hidden"}`} />
+          className={`bg-card/55 ${i < p2 ? "block" : "hidden"} ${i < p3 ? "md:block" : "md:hidden"} ${i < p4 ? "lg:block" : "lg:hidden"}`} />
       ))}
     </div>
   );

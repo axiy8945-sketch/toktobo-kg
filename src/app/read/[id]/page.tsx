@@ -19,7 +19,7 @@ export default async function ReadPage({ params }: { params: Promise<{ id: strin
   if (!ent && !isStaff) {
     return (
       <div className="wrap max-w-[520px] pt-10">
-        <div className="grid justify-items-start gap-4 rounded-hero bg-soft p-7">
+        <div className="grid justify-items-start gap-4 rounded-hero glass p-7">
           <p>{t(lang, "no_access")}</p>
           <Link href={`/books/${id}`} className="btn btn-sm">{t(lang, "more")}</Link>
         </div>

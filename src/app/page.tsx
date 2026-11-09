@@ -40,7 +40,7 @@ export default async function Home({ searchParams }: { searchParams: SP }) {
   return (
     <div className="wrap">
       {/* ---------- Баш бөлүк: текчедеги китептер ---------- */}
-      <section className="mt-4 grid gap-5 overflow-hidden rounded-hero bg-soft px-5 pb-7 pt-8 text-center md:grid-cols-2 md:items-center md:px-10 md:py-12 md:text-left">
+      <section className="mt-4 grid gap-5 overflow-hidden rounded-hero glass px-5 pb-7 pt-8 text-center md:grid-cols-2 md:items-center md:px-10 md:py-12 md:text-left">
         <div className="grid justify-items-center gap-3 md:justify-items-start">
           <h1 className="text-[clamp(26px,7.4vw,44px)] font-bold leading-tight">{t(lang, "hero2_t")}</h1>
           <p className="max-w-[36ch] text-[16px] leading-relaxed text-ink2">{t(lang, "hero2_p")}</p>
@@ -52,7 +52,7 @@ export default async function Home({ searchParams }: { searchParams: SP }) {
       {/* ---------- Бүгүнкү окуу ---------- */}
       {user && (
         <section className="pt-6">
-          <Link href="/progress" className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-card border border-line bg-card p-4">
+          <Link href="/progress" className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-card glass p-4">
             <div className="relative h-[76px] w-[76px]">
               <svg viewBox="0 0 76 76" className="h-full w-full -rotate-90" aria-hidden="true">
                 <circle cx="38" cy="38" r="34" fill="none" stroke="rgb(var(--soft-2))" strokeWidth="6" />

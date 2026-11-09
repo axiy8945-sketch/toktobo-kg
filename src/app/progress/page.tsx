@@ -100,7 +100,7 @@ export default async function ProgressPage() {
 
       <section className="grid gap-4 pt-9">
         <span className="eb">{t(lang, "this_week")}</span>
-        <div className="grid h-[170px] grid-cols-7 gap-2 rounded-card border border-line bg-card px-4 pb-3.5 pt-[18px]" role="img" aria-label={t(lang, "week_sum", { m: wm, d: wd })}>
+        <div className="grid h-[170px] grid-cols-7 gap-2 rounded-card glass px-4 pb-3.5 pt-[18px]" role="img" aria-label={t(lang, "week_sum", { m: wm, d: wd })}>
           {s.week.map((d, i) => {
             const h = d.min ? Math.max(4, (d.min / mx) * 100) : 0;
             return (
@@ -121,7 +121,7 @@ export default async function ProgressPage() {
 
       <section className="grid gap-2.5 pt-9"><span className="eb">{t(lang, "chal_t")}</span>
         {chal.map(([n, a, b]) => (
-          <div key={n} className="grid gap-2.5 rounded-[18px] border border-line bg-card px-4 py-3.5">
+          <div key={n} className="grid gap-2.5 rounded-[18px] glass px-4 py-3.5">
             <div className="flex justify-between gap-2.5 font-semibold">{n}<span className="font-mono text-xs font-medium text-muted">{a} / {b}</span></div>
             <div className="h-1.5 overflow-hidden rounded bg-soft2"><i className="block h-full rounded bg-accent" style={{ width: `${(a / b) * 100}%` }} /></div>
           </div>
@@ -132,7 +132,7 @@ export default async function ProgressPage() {
         <div className="flex justify-between"><span className="eb">{t(lang, "ach_t")}</span><span className="text-sm tabular-nums text-muted">{Object.values(unlocked).filter(Boolean).length} / {ACH.length}</span></div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(102px,1fr))] gap-2.5">
           {ACH.map((a) => (
-            <div key={a.id} className={`grid justify-items-center gap-1.5 rounded-[18px] border border-line bg-card px-2 py-3.5 text-center ${unlocked[a.id] ? "" : "opacity-50"}`}>
+            <div key={a.id} className={`grid justify-items-center gap-1.5 rounded-[18px] glass px-2 py-3.5 text-center ${unlocked[a.id] ? "" : "opacity-50"}`}>
               <span className={`grid h-10 w-10 place-items-center rounded-full border ${unlocked[a.id] ? "border-accent bg-accent-soft text-accent-deep" : "border-line text-muted"}`}>★</span>
               <b className="text-[13px] leading-tight">{a.n[li]}</b>
               <span className="text-[11px] leading-snug text-muted">{a.d[li]}</span>

@@ -18,7 +18,7 @@ export function ProfileEdit({ name, phone }: { name: string; phone: string }) {
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
-      <button className="absolute inset-0 bg-black/45" aria-label={t(lang, "back")} onClick={() => setOpen(false)} />
+      <button className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" aria-label={t(lang, "back")} onClick={() => setOpen(false)} />
       <form className="absolute inset-x-0 bottom-0 mx-auto grid max-w-[560px] gap-3.5 rounded-t-[28px] bg-bg p-5 pb-[calc(24px+env(safe-area-inset-bottom))]"
         onSubmit={(e) => { e.preventDefault(); start(async () => {
           const r = await updateProfile(f);

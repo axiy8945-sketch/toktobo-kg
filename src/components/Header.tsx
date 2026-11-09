@@ -56,11 +56,11 @@ export function Header({ lang, loggedIn, isStaff, today }: {
     ["/orders", t(lang, "nav_orders")],
     ...(isStaff ? ([["/admin", t(lang, "nav_admin")]] as [string, string][]) : []),
   ];
-  const round = "grid h-11 w-11 place-items-center rounded-full bg-soft";
+  const round = "grid h-11 w-11 place-items-center rounded-full glass-btn";
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
+      <header className="sticky top-0 z-30 border-b glass-bar pt-[env(safe-area-inset-top)] backdrop-blur-md">
         <div className="wrap flex items-center gap-1.5 py-2.5">
           <Link href="/" className="mr-auto md:mr-6" aria-label="Toktobo"><Logo /></Link>
           <nav className="mr-auto hidden items-center gap-1 md:flex" aria-label="Main">
@@ -90,8 +90,8 @@ export function Header({ lang, loggedIn, isStaff, today }: {
 
       {open && (
         <div className="fixed inset-0 z-50" role="dialog" aria-modal="true">
-          <button className="absolute inset-0 bg-black/45" aria-label={t(lang, "back")} onClick={() => setOpen(false)} />
-          <div className="absolute inset-x-0 bottom-0 mx-auto max-h-[92vh] max-w-[640px] overflow-auto rounded-t-[28px] bg-bg px-[18px] pb-[calc(26px+env(safe-area-inset-bottom))] pt-3">
+          <button className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" aria-label={t(lang, "back")} onClick={() => setOpen(false)} />
+          <div className="absolute inset-x-0 bottom-0 mx-auto max-h-[92vh] max-w-[640px] overflow-auto rounded-t-[28px] glass-bar px-[18px] pb-[calc(26px+env(safe-area-inset-bottom))] pt-3">
             <div className="mx-auto mb-3 h-1.5 w-11 rounded-full bg-line" />
             <div className="mb-2 flex items-center justify-between">
               <Logo />

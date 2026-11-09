@@ -56,7 +56,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       {/* ---------- Азыр окуп жаткан китеп текчеде ---------- */}
       <section className="pt-4">
         {current ? (
-          <Link href={current.file_path ? `/read/${current.id}` : `/books/${current.id}`} className="block overflow-hidden rounded-hero bg-soft px-5 pt-6">
+          <Link href={current.file_path ? `/read/${current.id}` : `/books/${current.id}`} className="block overflow-hidden rounded-hero glass px-5 pt-6">
             <div className="grid grid-cols-[104px_1fr] items-end gap-5">
               <Cover book={current} className="relative z-[1] -mb-1 shadow-book" />
               <div className="min-w-0 pb-5">
@@ -72,7 +72,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
             <div className="shelf-plank -mx-5" />
           </Link>
         ) : (
-          <div className="grid justify-items-center gap-4 rounded-hero bg-soft p-7 text-center">
+          <div className="grid justify-items-center gap-4 rounded-hero glass p-7 text-center">
             <p className="max-w-[34ch] text-ink2">{t(lang, "no_reading")}</p>
             <Link href="/books?fmt=ebook" className="btn btn-sm">{t(lang, "free_t")}</Link>
           </div>

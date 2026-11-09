@@ -21,7 +21,7 @@ export default async function OrdersPage() {
       <div className="mt-6 grid gap-3">
         {!orders?.length && <p className="text-muted">{t(lang, "orders_empty")}</p>}
         {orders?.map((o) => (
-          <div key={o.id} className="grid gap-1.5 rounded-[18px] border border-line bg-card p-4 text-sm">
+          <div key={o.id} className="grid gap-1.5 rounded-[18px] glass p-4 text-sm">
             <div className="flex justify-between gap-2.5 text-[15px] font-semibold">
               <span className="tabular-nums">№ {o.number}</span><span className="tabular-nums">{som(lang, o.total)}</span>
             </div>

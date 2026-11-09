@@ -117,7 +117,7 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
         {busy && <button className="btn btn-line btn-sm justify-self-start" onClick={() => ctl.current?.abort()}>{t(lang, "stop")}</button>}
 
         {quizPick && (
-          <div className="grid gap-3.5 rounded-card border border-line bg-card p-5">
+          <div className="grid gap-3.5 rounded-card glass p-5">
             <b className="text-lg">{t(lang, "quiz_pick")}</b>
             <select className="input" value={quizBook} onChange={(e) => setQuizBook(e.target.value)}>
               {books.map((b) => <option key={b.id} value={b.id}>{b.title} — {b.author}</option>)}
@@ -127,7 +127,7 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
         )}
         {quizLoading && <p className="text-muted">{t(lang, "quiz_making")}</p>}
         {quiz && (
-          <div className="grid gap-3.5 rounded-card border border-line bg-card p-5">
+          <div className="grid gap-3.5 rounded-card glass p-5">
             <span className="eb">{quiz.title}</span>
             {quiz.i >= quiz.qs.length ? (
               <>
@@ -169,7 +169,7 @@ export function CoachChat({ books, focus }: { books: { id: string; title: string
       <form className="sticky bottom-[calc(70px+env(safe-area-inset-bottom))] flex gap-2 bg-bg py-2.5" onSubmit={(e) => { e.preventDefault(); send(draft); }}>
         <textarea rows={1} value={draft} onChange={(e) => setDraft(e.target.value)} placeholder={t(lang, "input_ph")} aria-label={t(lang, "input_ph")} maxLength={4000}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(draft); } }}
-          className="max-h-32 min-w-0 flex-1 resize-none rounded-[22px] border border-line bg-card px-4 py-3" />
+          className="max-h-32 min-w-0 flex-1 resize-none rounded-[22px] glass px-4 py-3" />
         <button className="grid h-[50px] w-[50px] flex-none place-items-center self-end rounded-full bg-accent text-accent-ink disabled:opacity-50" disabled={busy || !draft.trim()} aria-label="Send">
           <IconSend className="h-5 w-5" />
         </button>

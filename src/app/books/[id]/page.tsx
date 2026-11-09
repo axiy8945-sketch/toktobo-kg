@@ -43,7 +43,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
         </Link>
       </div>
       <div className="grid gap-[22px] pt-[22px] md:grid-cols-[.9fr_1.1fr] md:items-start md:gap-10">
-        <div className="grid place-items-center rounded-hero bg-soft py-[34px] md:sticky md:top-24">
+        <div className="grid place-items-center rounded-hero glass py-[34px] md:sticky md:top-24">
           <Cover book={book} className="w-[min(260px,64%)] shadow-book" />
         </div>
         <div className="grid min-w-0 gap-[22px]">
@@ -57,7 +57,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
 
           <div className="grid gap-3">
             {book.ebook_mode !== "none" && (
-              <div className="grid gap-3 rounded-[20px] border border-line bg-card p-[18px]">
+              <div className="grid gap-3 rounded-[20px] glass p-[18px]">
                 <div className="flex items-center gap-3">
                   <IconEbook className="h-6 w-6 flex-none text-accent-deep" />
                   <div className="min-w-0 flex-1">
@@ -73,7 +73,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
               </div>
             )}
             {book.paper_price ? (
-              <div className="grid gap-3 rounded-[20px] border border-line bg-card p-[18px]">
+              <div className="grid gap-3 rounded-[20px] glass p-[18px]">
                 <div className="flex items-center gap-3">
                   <IconBooks className="h-6 w-6 flex-none text-accent-deep" />
                   <div className="min-w-0 flex-1">
@@ -88,7 +88,7 @@ export default async function BookPage({ params }: { params: Promise<{ id: strin
             ) : null}
           </div>
           {book.paper_price ? (
-            <div className="grid gap-2 rounded-[20px] bg-soft p-4">
+            <div className="grid gap-2 rounded-[20px] glass p-4">
               <span className="text-[14px] font-semibold">{t(lang, "order_other")}</span>
               <div className="flex flex-wrap gap-2">
                 <a href={waShop(t(lang, "wa_book_msg", { t: book.title }))} target="_blank" rel="noopener noreferrer" className="chip !border-transparent !bg-[#25D366] !text-white"><IconWhatsApp className="h-4 w-4" /> WhatsApp</a>

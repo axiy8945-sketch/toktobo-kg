@@ -14,7 +14,7 @@ export function TabBar({ labels }: { labels: Record<"home" | "books" | "lib" | "
     { href: "/progress", label: labels.prog, Icon: IconUser, on: path.startsWith("/progress") || path.startsWith("/orders") },
   ];
   return (
-    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 md:hidden border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 md:hidden border-t glass-bar pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
       <div className="mx-auto grid max-w-[560px] grid-cols-5">
         {tabs.map(({ href, label, Icon, on }) => (
           <Link key={href} href={href} aria-current={on ? "page" : undefined}
